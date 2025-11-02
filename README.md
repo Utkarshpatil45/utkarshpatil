@@ -1,2 +1,2 @@
 # utkarshpatil
-this project about simple calculator using html , css , javascript.
+simple calculator using HTML, CSS, Javascript.
