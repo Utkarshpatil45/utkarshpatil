@@ -1,2 +1,2 @@
 # utkarshpatil
-hello this is my first github reposetry
+this project about simple calculator using html , css , javascript.
