@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Control Presentation Tool</title>
+
+    <!-- Inline CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #121212;
+            color: #fff;
+            text-align: center;
+        }
+
+        header {
+            padding: 30px;
+            background: #1f1f1f;
+        }
+
+        #video-container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            margin: 20px auto;
+            border: 2px solid #444;
+            border-radius: 10px;
+        }
+
+        #webcam, #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 640px;
+            height: 480px;
+        }
+
+        #controls {
+            margin: 20px;
+        }
+
+        button {
+            background: #4caf50;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 8px;
+        }
+
+        button:hover {
+            background: #43a047;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 10px;
+            background: #1f1f1f;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Gesture Control Presentation Tool</h1>
+    <p>Control your slides with simple hand gestures — click Start to begin.</p>
+</header>
+
+<section id="app">
+    <div id="video-container">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="overlay"></canvas>
+    </div>
+
+    <div id="controls">
+        <button id="startBtn">Start Gesture Detection</button>
+        <button id="stopBtn">Stop</button>
+    </div>
+
+    <div id="status">Status: Idle</div>
+</section>
+
+<footer>
+    <p>Made by ✨ Amol / Ajinkya / Riya  ✨</p>
+</footer>
+
+<!-- Inline JavaScript -->
+<script>
+    const webcam = document.getElementById("webcam");
+    const overlay = document.getElementById("overlay");
+    const ctx = overlay.getContext("2d");
+
+    let stream = null;
+    let detecting = false;
+
+    document.getElementById("startBtn").onclick = startDetection;
+    document.getElementById("stopBtn").onclick = stopDetection;
+
+    async function startDetection() {
+        document.getElementById("status").innerText = "Status: Starting Camera...";
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        } catch (err) {
+            alert("Camera access blocked or not found.");
+            return;
+        }
+
+        webcam.srcObject = stream;
+
+        detecting = true;
+        document.getElementById("status").innerText = "Status: Detecting Gestures...";
+
+        detectLoop();
+    }
+
+    function stopDetection() {
+        detecting = false;
+        document.getElementById("status").innerText = "Status: Stopped";
+
+        if (stream) {
+            stream.getTracks().forEach(t => t.stop());
+        }
+    }
+
+    async function detectLoop() {
+        while (detecting) {
+            ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+            // Fake gesture detection (for demo)
+            const gesture = fakeGestureDetector();
+            if (gesture) {
+                handleGesture(gesture);
+            }
+
+            await new Promise(r => requestAnimationFrame(r));
+        }
+    }
+
+    // Fake gesture function (replace with real model)
+    function fakeGestureDetector() {
+        if (Math.random() < 0.005) {
+            const gestures = ["swipe-left", "swipe-right", "open-hand"];
+            return gestures[Math.floor(Math.random() * gestures.length)];
+        }
+        return null;
+    }
+
+    function handleGesture(gesture) {
+        console.log("Gesture:", gesture);
+        if (gesture === "swipe-right") {
+            document.getElementById("status").innerText = "Gesture: Next Slide →";
+        }
+        if (gesture === "swipe-left") {
+            document.getElementById("status").innerText = "Gesture: ← Previous Slide";
+        }
+        if (gesture === "open-hand") {
+            document.getElementById("status").innerText = "Gesture: Open Hand (Pause)";
+        }
+    }
+</script>
+
+</body>
+</html>
